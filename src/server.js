@@ -18,7 +18,7 @@ const limitAPICalls = (req, res, next) => {
     if (!apiCallCount.has(ip)) {
       apiCallCount.set(ip, 0);
     }
-    if (apiCallCount.get(ip) >= 3) {
+    if (apiCallCount.get(ip) >= 6) {
       return res
         .status(429)
         .json({ error: "API call limit exceeded for this IP address" });
@@ -32,8 +32,30 @@ const limitAPICalls = (req, res, next) => {
 
 app.post("/api/generate-letter", limitAPICalls, async (req, res) => {
   const { userPrompt, context } = req.body;
+
   try {
     const result = await callAPIOpenAI(userPrompt, context);
+    // res.writeHead(200, {
+    //   "Content-Type": "application/json",
+    //   "Transfer-Encoding": "chunked",
+    //   Connection: "keep-alive",
+    // });
+    // if (response && typeof response.on === "function") {
+    //   response
+    //     .on("data", (chunk) => {
+    //       res.write(chunk.choices[0]?.delta?.content || "");
+    //     })
+    //     .on("end", () => {
+    //       res.end();
+    //     })
+    //     .on("error", (err) => {
+    //       console.error(err);
+    //       res.status(500).end({ error: err.message });
+    //     });
+    // } else {
+    //   // Si la réponse n'est pas un flux, envoyez-la directement au client
+    //   res.end(response.choices[0]?.delta?.content || "");
+    // }
     res.json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
