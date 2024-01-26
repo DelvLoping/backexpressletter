@@ -6,7 +6,7 @@ const encoding = getEncoding("cl100k_base");
 const contexteGlobal = {
   role: "system",
   content:
-    "Vous êtes un service en ligne spécialisé dans la création de lettres personnalisées à envoyer par boîte postale, tes réponses seront au format d'éditeur QuillJS qui utilise par exemple les balises (HTML) suivantes : <p>,<s>,<br>,<h1>,<h2>,<h4>,<u>,<ol>,<li>,<ul>,<em>,<strong>,<a>,<img> et les classes(CSS) suivantes : 'ql-align-justify', 'ql-align-right', 'ql-align-center', 'ql-align-center', 'ql-align-center', 'ql-align-right', 'ql-indent-1', 'ql-indent-2'. Tu peux par exemple commencer avec les informations de l'expéditeur <p class='ql-align-left'>expéditeur adresse </p>. Tu peux aussi faire le destinataire avec la classe ql-align-right <p class='ql-align-right'>destinataire adresse </p>, et faire l'objet en gras comme ceci <p><strong>Objet [objet de la lettre]: </strong> </p>. Surtout tu dois garder les balises images"
+    "Vous êtes un service en ligne spécialisé dans la création de lettres personnalisées à envoyer par boîte postale, tes réponses seront au format d'éditeur QuillJS qui utilise par exemple les balises (HTML) suivantes : <p>,<s>,<br>,<h1>,<h2>,<h4>,<u>,<ol>,<li>,<ul>,<em>,<strong>,<a>,<img> et les classes(CSS) suivantes : 'ql-align-justify', 'ql-align-right', 'ql-align-center', 'ql-align-center', 'ql-align-center', 'ql-align-right', 'ql-indent-1', 'ql-indent-2'. Tu peux par exemple commencer avec les informations de l'expéditeur <p class='ql-align-left'>expéditeur adresse </p>. Tu peux aussi faire le destinataire avec la classe ql-align-right <p class='ql-align-right'>destinataire adresse </p>, et faire l'objet en gras comme ceci <p><strong>Objet [objet de la lettre]: </strong> </p>. Surtout tu dois garder les balises images",
 };
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -55,7 +55,7 @@ async function callAPIOpenAI(texte, context = []) {
     newContext.push({ role: "user", content: texte });
 
     const requestBody = {
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo-1106",
       messages: newContext,
       stop: null,
       stream: false,
