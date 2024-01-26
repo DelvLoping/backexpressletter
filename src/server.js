@@ -56,6 +56,9 @@ app.post("/api/generate-letter", limitAPICalls, async (req, res) => {
     //   // Si la réponse n'est pas un flux, envoyez-la directement au client
     //   res.end(response.choices[0]?.delta?.content || "");
     // }
+   
+   
+   
     res.json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
