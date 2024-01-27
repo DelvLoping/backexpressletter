@@ -46,40 +46,46 @@ const calculateTokenUsage = (messages) => {
   return numTokens;
 };
 
-async function callAPIOpenAI(texte, context = []) {
-  let newContext = context;
-  newContext = trimContextHistory(newContext);
-  newContext = applySystemOnContext(newContext);
+const handleTokenLimitExceeded = (tokenUsage) => {
+  if (tokenUsage > 5000) {
+    throw new Error("Token limit exceeded");
+  }
+};
 
-  if (texte) {
-    newContext.push({ role: "user", content: texte });
+async function callAPIOpenAI(userInput, context = []) {
+  let updatedContext = context;
+
+  updatedContext = trimContextHistory(updatedContext);
+  updatedContext = applySystemOnContext(updatedContext);
+
+  if (userInput) {
+    updatedContext.push({ role: "user", content: userInput });
 
     const requestBody = {
       model: "gpt-3.5-turbo-1106",
-      messages: newContext,
+      messages: updatedContext,
       stop: null,
       stream: false,
     };
 
     try {
       // Check token usage
-      const tokenUsage = calculateTokenUsage(newContext);
-      const tokenPrice = 0.001;
-      console.log(tokenUsage, (tokenUsage / 1000) * tokenPrice + "$");
-      if (tokenUsage > 5000) {
-        return "token limit exceeded";
-      }
+      const tokenUsage = calculateTokenUsage(updatedContext);
+      /**
+       * const tokenPrice = 0.001;
+       * console.log(tokenUsage, (tokenUsage / 1000) * tokenPrice + "$");
+       * add here log for token usage
+       */
+      handleTokenLimitExceeded(tokenUsage);
 
       // Call the OpenAI API
       const response = await openai.chat.completions.create(requestBody);
-      newContext.push(response.choices[0].message);
-      return newContext;
+      updatedContext.push(response.choices[0].message);
+      return updatedContext;
     } catch (error) {
-      console.error("Error from OpenAI API :" + error.message);
       throw error;
     }
   } else {
-    console.error("Prompt is empty");
     throw new Error("Prompt is empty");
   }
 }
